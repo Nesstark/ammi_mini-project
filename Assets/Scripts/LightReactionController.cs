@@ -3,27 +3,38 @@ using System.Collections;
 
 public class LightReactionController : MonoBehaviour
 {
+    [Header("Detection Settings")]
+    public Transform lightsParent;     // The parent object that holds all cylinders/lights
+
     [Header("Light Settings")]
-    public GameObject[] lightTargets;      // Assign your light objects here
-    public float delayBetweenLights = 1f;  // Time before the next random light
-    public float lightActiveTime = 1.5f;   // How long the light stays on
+    public float delayBetweenLights = 1f;
+    public float lightActiveTime = 1.5f;
 
     [Header("Audio Settings")]
-    public AudioClip dingSound;            // Assign your .wav file here
+    public AudioClip dingSound;
     private AudioSource audioSource;
 
+    private Light[] lights;            // Array of detected lights
     private System.Random rng;
 
     private void Start()
     {
-        // True random seed
+        // True random
         rng = new System.Random(System.DateTime.Now.Millisecond);
 
-        // Setup audio source
+        // Setup audio
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
 
-        // Start the loop
+        // Auto-detect lights in children
+        lights = lightsParent.GetComponentsInChildren<Light>(true);
+
+        if (lights.Length == 0)
+        {
+            Debug.LogError("No Light components found under the assigned parent!");
+            return;
+        }
+
         StartCoroutine(LightLoop());
     }
 
@@ -33,33 +44,25 @@ public class LightReactionController : MonoBehaviour
         {
             yield return new WaitForSeconds(delayBetweenLights);
 
-            if (lightTargets.Length == 0)
-                yield break;
-
-            int index = rng.Next(lightTargets.Length);
-            GameObject chosenLight = lightTargets[index];
+            int index = rng.Next(lights.Length);
+            Light chosenLight = lights[index];
 
             ActivateLight(chosenLight);
-
             yield return new WaitForSeconds(lightActiveTime);
-
             DeactivateLight(chosenLight);
         }
     }
 
-    private void ActivateLight(GameObject lightObj)
+    private void ActivateLight(Light light)
     {
-        lightObj.SetActive(true);
+        light.enabled = true;
 
-        // Play ding sound
         if (dingSound != null)
-        {
             audioSource.PlayOneShot(dingSound);
-        }
     }
 
-    private void DeactivateLight(GameObject lightObj)
+    private void DeactivateLight(Light light)
     {
-        lightObj.SetActive(false);
+        light.enabled = false;
     }
 }

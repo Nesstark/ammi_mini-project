@@ -10501,10 +10501,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfe5eec6e9ad0f849b72abc76a5d10fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightTargets: []
+  lightsParent: {fileID: 1816133952}
   delayBetweenLights: 1
   lightActiveTime: 1.5
-  dingSound: {fileID: 0}
+  dingSound: {fileID: 8300000, guid: 6aba13df7b90c5f4888be1a253c88b70, type: 3}
 --- !u!4 &1801531917
 Transform:
   m_ObjectHideFlags: 0
