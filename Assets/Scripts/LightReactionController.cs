@@ -4,34 +4,30 @@ using System.Collections;
 public class LightReactionController : MonoBehaviour
 {
     [Header("Detection Settings")]
-    public Transform lightsParent;     // The parent object that holds all cylinders/lights
+    public Transform lightsParent;     // Parent object with all the lamp objects
 
     [Header("Light Settings")]
     public float delayBetweenLights = 1f;
     public float lightActiveTime = 1.5f;
 
-    [Header("Audio Settings")]
-    public AudioClip dingSound;
-    private AudioSource audioSource;
+    private Light[] lights;
+    private AudioSource[] audioSources;
 
-    private Light[] lights;            // Array of detected lights
     private System.Random rng;
 
     private void Start()
     {
-        // True random
         rng = new System.Random(System.DateTime.Now.Millisecond);
 
-        // Setup audio
-        audioSource = gameObject.AddComponent<AudioSource>();
-        audioSource.playOnAwake = false;
-
-        // Auto-detect lights in children
+        // Detect all Light components
         lights = lightsParent.GetComponentsInChildren<Light>(true);
+
+        // Detect matching AudioSources (one on each lamp)
+        audioSources = lightsParent.GetComponentsInChildren<AudioSource>(true);
 
         if (lights.Length == 0)
         {
-            Debug.LogError("No Light components found under the assigned parent!");
+            Debug.LogError("No Light components found under lightsParent!");
             return;
         }
 
@@ -45,24 +41,24 @@ public class LightReactionController : MonoBehaviour
             yield return new WaitForSeconds(delayBetweenLights);
 
             int index = rng.Next(lights.Length);
-            Light chosenLight = lights[index];
 
-            ActivateLight(chosenLight);
+            ActivateLight(index);
             yield return new WaitForSeconds(lightActiveTime);
-            DeactivateLight(chosenLight);
+            DeactivateLight(index);
         }
     }
 
-    private void ActivateLight(Light light)
+    private void ActivateLight(int index)
     {
-        light.enabled = true;
+        lights[index].enabled = true;
 
-        if (dingSound != null)
-            audioSource.PlayOneShot(dingSound);
+        // Play spatial ding from that lamp
+        if (audioSources[index] != null)
+            audioSources[index].Play();
     }
 
-    private void DeactivateLight(Light light)
+    private void DeactivateLight(int index)
     {
-        light.enabled = false;
+        lights[index].enabled = false;
     }
 }
