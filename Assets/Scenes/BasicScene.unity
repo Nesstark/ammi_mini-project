@@ -2733,8 +2733,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lightsParent: {fileID: 1816133952}
-  delayBetweenLights: 1
-  lightActiveTime: 1.5
+  delayBetweenLights: 5
+  lightActiveTime: 3.5
 --- !u!4 &1801531917
 Transform:
   m_ObjectHideFlags: 0
