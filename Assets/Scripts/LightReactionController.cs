@@ -12,24 +12,18 @@ public class LightReactionController : MonoBehaviour
 
     private Light[] lights;
     private AudioSource[] audioSources;
+    private LampTrigger[] lampTriggers;
 
     private System.Random rng;
+    private int currentIndex = -1;
 
     private void Start()
     {
         rng = new System.Random(System.DateTime.Now.Millisecond);
 
-        // Detect all Light components
         lights = lightsParent.GetComponentsInChildren<Light>(true);
-
-        // Detect matching AudioSources (one on each lamp)
         audioSources = lightsParent.GetComponentsInChildren<AudioSource>(true);
-
-        if (lights.Length == 0)
-        {
-            Debug.LogError("No Light components found under lightsParent!");
-            return;
-        }
+        lampTriggers = lightsParent.GetComponentsInChildren<LampTrigger>(true);
 
         StartCoroutine(LightLoop());
     }
@@ -40,11 +34,22 @@ public class LightReactionController : MonoBehaviour
         {
             yield return new WaitForSeconds(delayBetweenLights);
 
-            int index = rng.Next(lights.Length);
+            // Pick new random lamp
+            currentIndex = rng.Next(lights.Length);
 
-            ActivateLight(index);
+            ActivateLight(currentIndex);
+            lampTriggers[currentIndex].SetLit(true);
+
             yield return new WaitForSeconds(lightActiveTime);
-            DeactivateLight(index);
+
+            // Missed the reaction window?
+            if (lampTriggers[currentIndex].isLit)
+            {
+                GameUIManager.Instance.MissedLamp();
+            }
+
+            DeactivateLight(currentIndex);
+            lampTriggers[currentIndex].SetLit(false);
         }
     }
 
@@ -52,7 +57,6 @@ public class LightReactionController : MonoBehaviour
     {
         lights[index].enabled = true;
 
-        // Play spatial ding from that lamp
         if (audioSources[index] != null)
             audioSources[index].Play();
     }
