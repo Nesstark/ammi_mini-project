@@ -11,11 +11,11 @@ GameObject:
   - component: {fileID: 5801655418083600308}
   - component: {fileID: 1095625305092764838}
   - component: {fileID: 3477527210784965481}
-  - component: {fileID: 7134920905124975232}
   - component: {fileID: 7446900332269252460}
   - component: {fileID: 6324843049762893012}
   - component: {fileID: 7777226225026293461}
   - component: {fileID: 3887152185243351991}
+  - component: {fileID: 2444967391713868769}
   m_Layer: 0
   m_Name: Cylinder
   m_TagString: Untagged
@@ -91,29 +91,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &7134920905124975232
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 538482162555316288}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!108 &7446900332269252460
 Light:
   m_ObjectHideFlags: 0
@@ -124,8 +101,8 @@ Light:
   m_Enabled: 0
   serializedVersion: 11
   m_Type: 2
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
-  m_Intensity: 2
+  m_Color: {r: 0.10617697, g: 1, b: 0, a: 1}
+  m_Intensity: 3
   m_Range: 2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -382,3 +359,24 @@ MonoBehaviour:
   applyHRTFToPathing: 0
   pathingMixLevel: 1
   normalizePathingEQ: 0
+--- !u!65 &2444967391713868769
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538482162555316288}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0000002, y: 2.0000005, z: 1.0000006}
+  m_Center: {x: 0.00000005960465, y: -5.046757e-21, z: -0.000000089406996}
