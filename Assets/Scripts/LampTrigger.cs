@@ -5,6 +5,9 @@ using System.Collections;
 
 public class LampTrigger : MonoBehaviour
 {
+    [Header("References")]
+    public Light pointLight;  // <-- Assign in Inspector!
+
     [Header("Haptics")]
     public float hapticAmplitude = 0.7f;
     public float hapticDuration = 0.3f;
@@ -15,29 +18,50 @@ public class LampTrigger : MonoBehaviour
 
     private InputDevice leftHand;
     private InputDevice rightHand;
+    private AudioSource audioSource;
 
-    private Light pointLight;
+    private void Awake()
+    {
+        // FAILSAFE: hvis den ikke er sat i Inspector, så find den
+        if (pointLight == null)
+            pointLight = GetComponentInChildren<Light>(true);
+
+        if (pointLight == null)
+            Debug.LogError($"{name}: No Point Light assigned or found!");
+
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    public void ActivateLamp()
+    {
+        if (pointLight != null)
+            pointLight.enabled = true;
+
+        if (audioSource != null)
+            audioSource.Play();
+    }
+
+    public void DeactivateLamp()
+    {
+        if (pointLight != null)
+            pointLight.enabled = false;
+    }
+
+    public bool isLit => pointLight != null && pointLight.enabled;
 
     private void Start()
     {
         InitializeControllers();
-
-        pointLight = GetComponentInChildren<Light>();
-        if (pointLight == null)
-            Debug.LogWarning($"LampTrigger {name} har ingen Point Light i children!");
     }
 
     private void InitializeControllers()
     {
-        List<InputDevice> devices = new List<InputDevice>();
-
+        var devices = new List<InputDevice>();
         InputDevices.GetDevicesAtXRNode(XRNode.LeftHand, devices);
-        if (devices.Count > 0)
-            leftHand = devices[0];
+        if (devices.Count > 0) leftHand = devices[0];
 
         InputDevices.GetDevicesAtXRNode(XRNode.RightHand, devices);
-        if (devices.Count > 0)
-            rightHand = devices[0];
+        if (devices.Count > 0) rightHand = devices[0];
     }
 
     private void OnTriggerEnter(Collider other)
@@ -45,12 +69,10 @@ public class LampTrigger : MonoBehaviour
         if (!other.CompareTag("Player") || !canTrigger)
             return;
 
-        bool lampIsLit = pointLight != null && pointLight.enabled;
-
-        if (lampIsLit)
+        if (isLit)
         {
             GameUIManager.Instance.AddPoint();
-            pointLight.enabled = false; // sluk lampen
+            DeactivateLamp();
         }
         else
         {
@@ -59,10 +81,10 @@ public class LampTrigger : MonoBehaviour
             SendHaptics(rightHand);
         }
 
-        StartCoroutine(TriggerCooldown());
+        StartCoroutine(Cooldown());
     }
 
-    private IEnumerator TriggerCooldown()
+    private IEnumerator Cooldown()
     {
         canTrigger = false;
         yield return new WaitForSeconds(triggerCooldown);
@@ -71,26 +93,8 @@ public class LampTrigger : MonoBehaviour
 
     private void SendHaptics(InputDevice device)
     {
-        if (!device.isValid)
-            return;
-
-        if (device.TryGetHapticCapabilities(out HapticCapabilities capabilities))
-        {
-            if (capabilities.supportsImpulse)
-                device.SendHapticImpulse(0, hapticAmplitude, hapticDuration);
-        }
-    }
-
-    // Property til LightReactionController
-    public bool isLit
-    {
-        get { return pointLight != null && pointLight.enabled; }
-    }
-
-    // Metode til at tænde/slukke lampen
-    public void SetLit(bool state)
-    {
-        if (pointLight != null)
-            pointLight.enabled = state;
+        if (!device.isValid) return;
+        if (device.TryGetHapticCapabilities(out HapticCapabilities c) && c.supportsImpulse)
+            device.SendHapticImpulse(0, hapticAmplitude, hapticDuration);
     }
 }
