@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+// This code was made in collaboration with ChatGPT
+
 public class GameUIManager : MonoBehaviour
 {
     public static GameUIManager Instance;

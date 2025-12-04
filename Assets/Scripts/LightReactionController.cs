@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
+// This code was made in collaboration with ChatGPT
+
 public class LightReactionController : MonoBehaviour
 {
     public Transform lightsParent;

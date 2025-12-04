@@ -3,6 +3,8 @@ using UnityEngine.XR;
 using System.Collections.Generic;
 using System.Collections;
 
+// This code was made in collaboration with ChatGPT
+
 public class LampTrigger : MonoBehaviour
 {
     [Header("References")]
